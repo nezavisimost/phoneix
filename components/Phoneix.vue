@@ -37,11 +37,11 @@ export default {
       let pos = this.$refs.phoneix_input.selectionStart
 
       // fix inputEvent.data (issue #2)
-      let event = {data: e.data, inputType: e.inputType}
-      if(event.inputType === "insertFromPaste") {
+      let event = {data: e.data, input_type: e.inputType}
+      if(event.input_type === "insertFromPaste") {
         if (!event.data) {
-          let pasteLength = this.phone.length - this.old.length
-          event.data = this.phone.substr(this.old_position, pasteLength)
+          let paste_length = this.phone.length - this.old.length
+          event.data = this.phone.substr(this.old_position, paste_length)
         }
       }
 
