@@ -34,6 +34,16 @@ export default {
   },
   methods: {
     input: function (e) {
+      let pos = this.$refs.phoneix_input.selectionStart
+
+      // fix inputEvent.data (issue #2)
+      let event = {data: e.data, inputType: e.inputType}
+      if(event.inputType === "insertFromPaste") {
+        if (!event.data) {
+          let pasteLength = this.phone.length - this.old.length
+          event.data = this.phone.substr(this.old_position, pasteLength)
+        }
+      }
 
       this.phone = this.formatted_phone()
       this.phone_history.push(this.phone)
