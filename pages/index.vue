@@ -98,4 +98,12 @@ footer {
   justify-content: space-evenly;
   color: #696969
 }
+@media (max-width: 1024px) {
+  section.cover > .try_it {
+    position: static;
+    width: 100%;
+    margin-top: 20vh;
+    font-size: 3em;
+  }
+}
 </style>
