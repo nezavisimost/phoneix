@@ -30,7 +30,8 @@ export default {
       phone_history: [`+${this.base} (`],
       history_position: 0,
       old_position: 4,
-      selection_start: 4
+      selection_start: 4,
+      selection_length: 0,
     }
   },
   computed: {
@@ -70,11 +71,17 @@ export default {
           event.data = this.phone.substr(this.old_position, paste_length)
         }
       }
-      console.log(event.input_type, event.data)
       // типа ввод одного символа
       if(event.input_type === "insertText" || (["insertFromPaste", "insertFromDrop"].includes(event.input_type)  && event.data.length === 1)) {
         // один адекватный символ
         if(!isNaN(event.data) && event.data !== " " && event.data.length === 1) {
+          if (this.$refs.phoneix_input.selectionStart < 5) {
+            this.phone = this.old + event.data
+            pos = 5
+          }
+          if (this.selection_length) {
+            this.selectionReplace(this.phone, this.selection_start, this.selection_length, event.data)
+          }
           pos = this.transform_position(pos) // найдём правильную позицию курсора, если ввод осуществялся в центр
         }
         else if(isNaN(event.data) && event.data.length === 1 || event.data === " ") {
@@ -114,27 +121,14 @@ export default {
           this.phone = this.formatted_phone({raw: this.raw.substr(0, 6) + this.raw.substr(7)})
           pos = 11
         }
-        else if(this.phone.substr(0, 4) !== "+7 ("){
-          if (this.phone.length) this.phone = this.old
-          else {this.phone = "+7 ("; pos = 4}
-        }
-        else if(this.old.substr(-1) === "-" || this.old.substr(-1) === ")") {
-          this.phone = this.phone.substr(0,this.phone.length-1)
-        }
-        else if(this.old.substr(-2) === ") "){
-          this.phone = this.phone.substr(0,this.phone.length-2)
+        else if (pos === 16) {
+          this.phone = this.formatted_phone({raw: this.raw.substr(0, 9) + this.raw.substr(9)})
+          pos = 15
         }
         adding = false
         pos = this.transform_position(pos, adding)
       }
 
-
-
-      this.$nextTick(() => {
-        this.$refs.phoneix_input.setSelectionRange(pos, pos)
-      })
-      this.phone = this.formatted_phone({"adding": adding, "position": pos})
-      this.old_position = pos
       if(event.input_type === "historyUndo") {
         this.history_position -= 1
         this.phone = this.phone_history[this.history_position]
@@ -144,6 +138,11 @@ export default {
         this.phone_history = this.phone_history[this.history_position + 1]
       }
       else {
+        this.$nextTick(() => {
+          this.$refs.phoneix_input.setSelectionRange(pos, pos)
+        })
+        this.phone = this.formatted_phone({"adding": adding, "position": pos})
+        this.old_position = pos
         this.phone_history.slice(0, this.history_position)
         this.phone_history.push(this.phone)
         this.history_position = this.phone_history.length - 1
@@ -168,9 +167,6 @@ export default {
 
         if(position === 12){return  11}
         else if(position === 13 && this.phone.substr(-1) !== "-"){return  14}
-
-        if(position === 15){return 14}
-        else if(position === 16 && this.phone.substr(-1) !== "-"){return 17}
 
         return position
       }

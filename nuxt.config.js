@@ -8,7 +8,7 @@ export default {
   head: {
     title: 'phoneix',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'ru'
     },
     meta: [
       { charset: 'utf-8' },
