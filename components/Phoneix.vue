@@ -70,9 +70,9 @@ export default {
           event.data = this.phone.substr(this.old_position, paste_length)
         }
       }
-
+      console.log(event.input_type, event.data)
       // типа ввод одного символа
-      if(event.input_type === "insertText" || (event.input_type === "insertFromPaste" && event.data.length === 1)) {
+      if(event.input_type === "insertText" || (["insertFromPaste", "insertFromDrop"].includes(event.input_type)  && event.data.length === 1)) {
         // один адекватный символ
         if(!isNaN(event.data) && event.data !== " " && event.data.length === 1) {
           pos = this.transform_position(pos) // найдём правильную позицию курсора, если ввод осуществялся в центр
@@ -87,7 +87,7 @@ export default {
         }
       }
       // вставка из буфера обмена
-      else if(event.input_type === "insertFromPaste") {
+      else if(["insertFromPaste", "insertFromDrop"].includes(event.input_type)) {
         // получаем только цифры из всей пасты
         let clear = event.data.replace( /\D+/g, '')
         // если все цифры образуют номер телфона
@@ -127,9 +127,7 @@ export default {
         adding = false
         pos = this.transform_position(pos, adding)
       }
-      else if(event.input_type === "historyUndo") {
-        // что-то
-      }
+
 
 
       this.$nextTick(() => {
@@ -137,8 +135,19 @@ export default {
       })
       this.phone = this.formatted_phone({"adding": adding, "position": pos})
       this.old_position = pos
-      this.phone_history.push(this.phone)
-      this.history_position += 1
+      if(event.input_type === "historyUndo") {
+        this.history_position -= 1
+        this.phone = this.phone_history[this.history_position]
+      }
+      else if(event.input_type === "historyRedo") {
+        this.history_position += 1
+        this.phone_history = this.phone_history[this.history_position + 1]
+      }
+      else {
+        this.phone_history.slice(0, this.history_position)
+        this.phone_history.push(this.phone)
+        this.history_position = this.phone_history.length - 1
+      }
     },
     transform_position: function (position, adding=true){
       if (adding) {
