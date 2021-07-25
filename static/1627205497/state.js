@@ -1,1 +1,0 @@
-window.__NUXT__=(function(a,b){return {staticAssetsBase:"\u002F%3Crepository-name%3E\u002Fstatic\u002F1627205497",layout:"default",error:a,serverRendered:true,routePath:"\u002F",config:{_app:{basePath:b,assetsPath:b,cdnURL:a}}}}(null,"\u002F%3Crepository-name%3E\u002F"));
