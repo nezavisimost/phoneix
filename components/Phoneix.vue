@@ -1,7 +1,7 @@
 <template>
   <div class="phoneix_box">
-    <input type="text" class="phoneix_input placeholder" value="+7 (000) 000-00-00" :style="{'color': color_ph}">
-    <input type="tel" class="phoneix_input" value="+7 (" autofocus :style="{'color': color}">
+    <input type="text" class="phoneix_input placeholder" v-model="placeholder" :style="{'color': color_ph}">
+    <input type="tel" class="phoneix_input" ref="phoneix_input" value="+7 (" v-model="phone" @input="input" autofocus :style="{'color': color}">
   </div>
 </template>
 
@@ -17,6 +17,22 @@ export default {
     color_ph: {
       type: String,
       default: '#595959'
+    }
+  },
+  data() {
+    return {
+      phone: "+7 (",
+      ideal: "+7 (000) 000-00-00",
+    }
+  },
+  methods: {
+    input: function (e) {
+
+    }
+  },
+  computed: {
+    placeholder: function () {
+      return  this.phone + this.ideal.substr(this.phone.length)
     }
   }
 }
