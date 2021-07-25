@@ -1,7 +1,7 @@
 <template>
   <div class="phoneix_box">
     <input type="text" class="phoneix_input placeholder" v-model="placeholder" :style="{'color': color_ph}" @focus="$refs.phoneix_input.focus()">
-    <input type="tel" class="phoneix_input" ref="phoneix_input" value="+7 (" v-model="phone" @input="input" autofocus :style="{'color': color}">
+    <input type="tel" class="phoneix_input" ref="phoneix_input" value="+7 (" v-model="phone" @input="input" autofocus :style="{'color': color}" @select="onSelect">
   </div>
 </template>
 
@@ -30,9 +30,23 @@ export default {
       phone_history: [`+${this.base} (`],
       history_position: 0,
       old_position: 4,
+      selection_start: 4
     }
   },
   methods: {
+    onSelect: function (e) {
+      this.selection_start = e.target.selectionStart
+      this.selection_length = e.target.selectionEnd - e.target.selectionStart
+      if (this.selection_start < 4) {
+        this.selection_length -= 4 + this.selection_start;
+        this.selection_start = 4;
+        e.target.selectionStart = this.selection_start
+      }
+
+    },
+    selectionReplace: function(source, start, length, repl) {
+      return source.substr(0, start) + repl + source.substr(start+length)
+    },
     input: function (e) {
       let pos = this.$refs.phoneix_input.selectionStart
 
@@ -45,15 +59,87 @@ export default {
         }
       }
 
+      // типа ввод одного символа
+      if(event.input_type === "insertText" || (event.input_type === "insertFromPaste" && event.data.length === 1)) {
+        // один адекватный символ
+        if(!isNaN(event.data) && event.data !== " " && event.data.length === 1) {
+          console.log("->", pos)
+          pos = this.transform_position(pos) // найдём правильную позицию курсора, если ввод осуществялся в центр
+          console.log(pos, "->")
+        }
+        else if(isNaN(event.data) && event.data.length === 1 || event.data === " ") {
+          pos = pos -1
+          this.phone = this.old
+        }
+      }
+      // вставка из буфера обмена
+      else if(event.input_type === "insertFromPaste") {
+        // получаем только цифры из всей пасты
+        let clear = event.data.replace( /\D+/g, '')
+        // если все цифры образуют номер телфона
+        if(/[78]?9[0-9]{9}/gm.test(clear)){ // TODO: надо как-то научить вставлять в регулярку значение this.base
+          // убираем восьмёрку из начала
+          this.phone = ["8"].includes(clear.substr(0, 1)) ? this.base + clear.substr(1) : clear
+        }
+        // иначе если паста соответствует хотя бы частично формату номера телефона
+        else if(/[0-9()\- ]{1,17}/gm.test(event.data)) {
+          this.phone = this.old
+          let clear = event.data.replace( /\D+/g, '')
+          // Пытаемся добавить номер телефона к имеющемуся
+          this.phone = this.selectionReplace(this.phone, this.selection_start, this.selection_length, clear)
+        }
+      }
+      // на стирание
+      else if(event.input_type === "deleteContentBackward") {
+        // let delta = this.old.length - this.phone.length
+        if ([7, 8].includes(pos) && this.raw.length === 4 && this.old.substr(8,2) !== ") ") {
+          this.phone = this.formatted_phone({raw: this.raw.substr(1, 2)})
+          pos = 7
+        }
+        else if(this.phone.substr(0, 4) !== "+7 ("){
+          if (this.phone.length) this.phone = this.old
+          else {this.phone = "+7 ("; pos = 4}
+        }
+        else if((this.old.substr(-1) === "-" || this.old.substr(-1) === ")")) {
+          this.phone = this.phone.substr(0,this.phone.length-1)
+        }
+        else if((this.old.substr(-2) === ") ")){
+          this.phone = this.phone.substr(0,this.phone.length-2)
+        }
+      }
+      else if(event.input_type === "historyUndo") {
+        // что-то
+      }
+
+
+      this.$nextTick(() => {
+        this.$refs.phoneix_input.setSelectionRange(pos, pos)
+      })
       this.phone = this.formatted_phone()
+      this.old_position = pos
       this.phone_history.push(this.phone)
       this.history_position += 1
     },
-    formatted_phone: function (adding=true) {
-      let f3 = this.raw.substr(1, 3) // Первые три цифры -- (999)
-      let s3 = this.raw.substr(4, 3) // Вторые три цифры
-      let f2 = this.raw.substr(7, 2) // Первые две цифры из последнего блока из четырёх цифр
-      let s2 = this.raw.substr(9, 2) // Вторые две цифры
+    transform_position: function (position){
+      if(position === 7){return 9}
+      else if(position === 8){return 10}
+      else if(position === 9){return  10}
+
+      if(position === 12){return  13}
+      else if(position === 13 && this.phone.substr(-1) !== "-"){return  14}
+
+      if(position === 15){return 16}
+      else if(position === 16 && this.phone.substr(-1) !== "-"){return 17}
+
+      return position
+    },
+    formatted_phone: function ({adding=true, raw=false} = {}) {
+      raw = raw ? raw : this.raw // если не передано, то преобразуем this.phone'овское значение через его чистое представление
+
+      let f3 = raw.substr(1, 3) // Первые три цифры -- (999)
+      let s3 = raw.substr(4, 3) // Вторые три цифры
+      let f2 = raw.substr(7, 2) // Первые две цифры из последнего блока из четырёх цифр
+      let s2 = raw.substr(9, 2) // Вторые две цифры
 
       let normal = `+${this.base} (`
 
