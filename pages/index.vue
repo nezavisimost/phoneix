@@ -40,6 +40,7 @@ export default {
 body {
   margin: 0;
   padding: 0;
+  font-family: sans-serif;
 }
 a {
   text-decoration: none;
@@ -114,7 +115,8 @@ footer {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  color: #696969
+  color: #696969;
+  flex-wrap: wrap;
 }
 @media (max-width: 1024px) {
   section.cover {

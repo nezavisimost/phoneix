@@ -2,6 +2,7 @@
   "name": "phoneix",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://nezavisimost.github.io/phoneix/",
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",

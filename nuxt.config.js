@@ -1,7 +1,9 @@
 export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
-
+  router: {
+    base: '/phoneix/'
+  },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'phoneix',
@@ -58,5 +60,12 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    publicPath: process.env.NODE_ENV === 'production'
+      ? '/'
+      : '/phoneix/',
+    outputDir: process.env.NODE_ENV === 'production'
+      ? __dirname+'/lib'
+      : __dirname+'/ghp',
   },
+
 }
