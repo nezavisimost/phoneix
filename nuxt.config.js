@@ -37,9 +37,27 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    [
+      'nuxt-i18n',
+      {
+        vueI18nLoader: true,
+        strategy: 'no_prefix',
+        defaultLocale: 'ru',
+        locales: [
+          {
+            code: 'en',
+            name: 'English'
+          },
+          {
+            code: 'ru',
+            name: 'Русский'
+          }
+        ]
+      }
+    ]
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-  }
+  },
 }
