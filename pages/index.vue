@@ -2,8 +2,8 @@
   <div class="main">
     <section class="cover">
       <div class="bg">
-        <span style="display: block; width: 85vmax; height: 85vmax; border-radius: 50%; background: #fff; opacity: .02; transform: translate(50%, -40%); position: absolute; top: 0; right: 0"/>
-        <span style="display: block; width: 85vmax; height: 85vmax; border-radius: 50%; background: #fff; opacity: .01; transform: translate(40%, 40%); position: absolute; bottom: 0; right: 0"/>
+        <span class="circle first"/>
+        <span class="circle second"/>
       </div>
       <div class="content">
         <h1>Удобный ввод номера телефона</h1>
@@ -83,6 +83,22 @@ section.cover > .bg {
   height: 100%;
   overflow: hidden;
 }
+section.cover > .bg > .circle {
+  display: block;
+  width: 85vmax;
+  height: 85vmax;
+  border-radius: 50%;
+  background: #fff;
+  opacity: .02;
+  transform: translate(50%, -40%);
+  position: absolute;
+  top: 0; right: 0
+}
+section.cover > .bg > .circle.second {
+  transform: translate(40%, 40%);
+  opacity: .01;
+  top: unset; bottom: 0; right: 0
+}
 section.cover > .try_it {
   position: absolute;
   bottom: 50vh;
@@ -107,9 +123,14 @@ section.cover > .content > .links a:first-of-type {
   background: #333333;
   border-radius: .35em;
   color: #ffffff;
+  font-weight: 500;
 }
 section.cover > .content > .links a:last-of-type {
   margin-left: 2em;
+  transition: color .3s;
+}
+section.cover > .content > .links a:last-of-type:hover {
+  color: #fff
 }
 footer {
   background: #131313;
@@ -138,8 +159,20 @@ footer {
     font-size: 8vmin;
   }
   section.cover > .content {
-    position: static;
+    position: relative;
     padding: 1em;
+  }
+  section.cover > .bg > .circle {
+    width: 95vh;
+    height: 95vh;
+    top: unset;
+    bottom: 0;
+    transform: translate(60%, 40%);
+  }
+  section.cover > .bg > .circle.second {
+    width: 65vh;
+    height: 65vh;
+    transform: translate(-20%, 40%);
   }
 }
 @media (max-width: 500px) {
