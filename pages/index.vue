@@ -37,6 +37,17 @@ export default {
 </script>
 
 <style>
+body {
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+svg {
+  box-sizing: border-box;
+}
 .main {
   background: #080808;
   min-height: 100vh;
