@@ -34,6 +34,7 @@ export default {
   border: none;
   outline: none;
   width: 10em;
+  font-weight: inherit;
 }
 .phoneix_input.placeholder {
   position: absolute;

@@ -20,13 +20,19 @@
       </div>
     </section>
     <footer>
-      <span>nuxtjs</span> <span>tailwindcss</span> <span>rocketbank</span> <span>артель независимость</span>
+      <span><NuxtJS/></span> <span><Rocketbank/></span> <span><WhiteApfel/></span> <span><Github/></span>
     </footer>
   </div>
 </template>
 
 <script>
+import NuxtLogo from "../components/NuxtLogo";
+import NuxtJS from "../components/thanks/NuxtJS";
+import Rocketbank from "../components/thanks/Rocketbank";
+import WhiteApfel from "../components/thanks/WhiteApfel";
+import Github from "../components/thanks/Github";
 export default {
+  components: {Github, WhiteApfel, Rocketbank, NuxtJS, NuxtLogo}
 }
 </script>
 
@@ -68,8 +74,9 @@ section.cover > .bg {
 section.cover > .try_it {
   position: absolute;
   bottom: 50vh;
-  right: 5vw;
+  right: 9vw;
   font-size: 3em;
+  font-weight: 700;
 }
 section.cover > .content > .description {
   font-size: 1.25em;
