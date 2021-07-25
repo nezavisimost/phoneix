@@ -5,9 +5,6 @@
         <span style="display: block; width: 85vmax; height: 85vmax; border-radius: 50%; background: #fff; opacity: .02; transform: translate(50%, -40%); position: absolute; top: 0; right: 0"/>
         <span style="display: block; width: 85vmax; height: 85vmax; border-radius: 50%; background: #fff; opacity: .01; transform: translate(40%, 40%); position: absolute; bottom: 0; right: 0"/>
       </div>
-      <div class="try_it">
-        <Phoneix/>
-      </div>
       <div class="content">
         <h1>Удобный ввод номера телефона</h1>
         <p class="description">
@@ -17,6 +14,9 @@
           <a href="https://github.com/nezavisimost/phoneix">Начать юзать</a>
           <a href="https://github.com/nezavisimost/phoneix">К исходникам</a>
         </p>
+      </div>
+      <div class="try_it">
+        <Phoneix/>
       </div>
     </section>
     <footer>
@@ -99,11 +99,33 @@ footer {
   color: #696969
 }
 @media (max-width: 1024px) {
+  section.cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+  }
   section.cover > .try_it {
     position: static;
     width: 100%;
-    margin-top: 20vh;
-    font-size: 3em;
+    font-size: 7vmin;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  h1 {
+    font-size: 8vmin;
+  }
+  section.cover > .content {
+    position: static;
+    padding: 1em;
+  }
+}
+@media (max-width: 500px) {
+  section.cover > .content > .description {
+    font-size: 1em;
+  }
+  section.cover > .content > .links {
+    font-size: 4.5vmin;
   }
 }
 </style>
