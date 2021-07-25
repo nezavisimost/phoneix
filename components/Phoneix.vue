@@ -33,6 +33,17 @@ export default {
       selection_start: 4
     }
   },
+  computed: {
+    placeholder: function () {
+      return  this.phone + this.ideal.substr(this.phone.length)
+    },
+    raw: function () {
+      return this.phone.replace( /\D+/g, '')
+    },
+    old: function () {
+      return this.phone_history.slice(-1)[0]
+    }
+  },
   methods: {
     onSelect: function (e) {
       this.selection_start = e.target.selectionStart
@@ -49,6 +60,7 @@ export default {
     },
     input: function (e) {
       let pos = this.$refs.phoneix_input.selectionStart
+      let adding = true
 
       // fix inputEvent.data (issue #2)
       let event = {data: e.data, input_type: e.inputType}
@@ -63,13 +75,15 @@ export default {
       if(event.input_type === "insertText" || (event.input_type === "insertFromPaste" && event.data.length === 1)) {
         // один адекватный символ
         if(!isNaN(event.data) && event.data !== " " && event.data.length === 1) {
-          console.log("->", pos)
           pos = this.transform_position(pos) // найдём правильную позицию курсора, если ввод осуществялся в центр
-          console.log(pos, "->")
         }
         else if(isNaN(event.data) && event.data.length === 1 || event.data === " ") {
-          pos = pos -1
-          this.phone = this.old
+          pos = this.transform_position(pos)
+          if (pos !== this.phone.length && ![8,10,13,16].includes(pos)) {
+            pos -= 1
+            this.phone = this.old
+          }
+          console.log(pos)
         }
       }
       // вставка из буфера обмена
@@ -92,20 +106,26 @@ export default {
       // на стирание
       else if(event.input_type === "deleteContentBackward") {
         // let delta = this.old.length - this.phone.length
-        if ([7, 8].includes(pos) && this.raw.length === 4 && this.old.substr(8,2) !== ") ") {
-          this.phone = this.formatted_phone({raw: this.raw.substr(1, 2)})
-          pos = 7
+        if ([7, 8].includes(pos)) {
+          this.phone = this.formatted_phone({raw: this.raw.substr(0, 3) + this.raw.substr(4)})
+          pos = 6
+        }
+        else if (pos === 12) {
+          this.phone = this.formatted_phone({raw: this.raw.substr(0, 6) + this.raw.substr(7)})
+          pos = 11
         }
         else if(this.phone.substr(0, 4) !== "+7 ("){
           if (this.phone.length) this.phone = this.old
           else {this.phone = "+7 ("; pos = 4}
         }
-        else if((this.old.substr(-1) === "-" || this.old.substr(-1) === ")")) {
+        else if(this.old.substr(-1) === "-" || this.old.substr(-1) === ")") {
           this.phone = this.phone.substr(0,this.phone.length-1)
         }
-        else if((this.old.substr(-2) === ") ")){
+        else if(this.old.substr(-2) === ") "){
           this.phone = this.phone.substr(0,this.phone.length-2)
         }
+        adding = false
+        pos = this.transform_position(pos, adding)
       }
       else if(event.input_type === "historyUndo") {
         // что-то
@@ -115,25 +135,38 @@ export default {
       this.$nextTick(() => {
         this.$refs.phoneix_input.setSelectionRange(pos, pos)
       })
-      this.phone = this.formatted_phone()
+      this.phone = this.formatted_phone({"adding": adding, "position": pos})
       this.old_position = pos
       this.phone_history.push(this.phone)
       this.history_position += 1
     },
-    transform_position: function (position){
-      if(position === 7){return 9}
-      else if(position === 8){return 10}
-      else if(position === 9){return  10}
+    transform_position: function (position, adding=true){
+      if (adding) {
+        if(position === 7){return 9}
+        else if(position === 8){return 10}
+        else if(position === 9){return  10}
 
-      if(position === 12){return  13}
-      else if(position === 13 && this.phone.substr(-1) !== "-"){return  14}
+        if(position === 12){return  13}
+        else if(position === 13 && this.phone.substr(-1) !== "-"){return  14}
 
-      if(position === 15){return 16}
-      else if(position === 16 && this.phone.substr(-1) !== "-"){return 17}
+        if(position === 15){return 16}
+        else if(position === 16 && this.phone.substr(-1) !== "-"){return 17}
 
-      return position
+        return position
+      }
+      else {
+        if(position === 8){return 7}
+
+        if(position === 12){return  11}
+        else if(position === 13 && this.phone.substr(-1) !== "-"){return  14}
+
+        if(position === 15){return 14}
+        else if(position === 16 && this.phone.substr(-1) !== "-"){return 17}
+
+        return position
+      }
     },
-    formatted_phone: function ({adding=true, raw=false} = {}) {
+    formatted_phone: function ({adding=true, raw=false, position=20} = {}) {
       raw = raw ? raw : this.raw // если не передано, то преобразуем this.phone'овское значение через его чистое представление
 
       let f3 = raw.substr(1, 3) // Первые три цифры -- (999)
@@ -143,23 +176,12 @@ export default {
 
       let normal = `+${this.base} (`
 
-      if(f3.length) normal = `+${this.base} (${f3}${adding && f3.length === 3 ? ") " : ""}`
-      if(s3.length) normal = `+${this.base} (${f3}) ${s3}${adding && s3.length === 3 ? "-" : ""}`
-      if(f2.length) normal = `+${this.base} (${f3}) ${s3}-${f2}${adding && f2.length === 2 ? "-" : ""}`
+      if(f3.length) normal = `+${this.base} (${f3}${adding && f3.length === 3 && this.phone.length < position + 1 ? ") " : ""}`
+      if(s3.length) normal = `+${this.base} (${f3}) ${s3}${adding && s3.length === 3 && this.phone.length < position ? "-" : ""}`
+      if(f2.length) normal = `+${this.base} (${f3}) ${s3}-${f2}${adding && f2.length === 2 && this.phone.length < position ? "-" : ""}`
       if(s2.length) normal = `+${this.base} (${f3}) ${s3}-${f2}-${s2}`
 
       return normal
-    }
-  },
-  computed: {
-    placeholder: function () {
-      return  this.phone + this.ideal.substr(this.phone.length)
-    },
-    raw: function () {
-      return this.phone.replace( /\D+/g, '')
-    },
-    old: function () {
-      return this.phone_history[-1]
     }
   }
 }

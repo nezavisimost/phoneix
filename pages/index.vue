@@ -8,7 +8,7 @@
       <div class="content">
         <h1>Удобный ввод номера телефона</h1>
         <p class="description">
-          Без геморроя, боли, часов дебага и браузерной несовместимости. <br/>Сделайте ввод номера простым для своих клиентов с нашим компонентом.
+          Без геморроя, проблем, часов дебага и браузерной несовместимости. <br/>Сделай ввод номера простым и удобным для клиентов с нашим компонентом.
         </p>
         <p class="links">
           <a href="https://github.com/nezavisimost/phoneix">Начать юзать</a>
@@ -70,7 +70,7 @@ section.cover {
   padding: 0;
 }
 section.cover > .content {
-  padding-top: 30vh;
+  padding-top: 25vh;
   padding-left: 5em;
   position: relative;
 }
@@ -99,6 +99,8 @@ section.cover > .content > .links {
   font-size: 1.35em;
   margin-top: 3em;
   max-width: 40em;
+  display: flex;
+  align-items: center;
 }
 section.cover > .content > .links a:first-of-type {
   padding: .75em 1.5em;
