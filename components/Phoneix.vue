@@ -49,11 +49,11 @@ export default {
     onSelect: function (e) {
       this.selection_start = e.target.selectionStart
       this.selection_length = e.target.selectionEnd - e.target.selectionStart
-      if (this.selection_start < 4) {
-        this.selection_length -= 4 + this.selection_start;
-        this.selection_start = 4;
-        e.target.selectionStart = this.selection_start
-      }
+      // if (this.selection_start < 4) {
+      //   this.selection_length -= 4 + this.selection_start;
+      //   this.selection_start = 4;
+      //   e.target.selectionStart = this.selection_start
+      // }
 
     },
     selectionReplace: function(source, start, length, repl) {
@@ -76,7 +76,7 @@ export default {
         // один адекватный символ
         if(!isNaN(event.data) && event.data !== " " && event.data.length === 1) {
           if (this.$refs.phoneix_input.selectionStart < 5) {
-            this.phone = this.old + event.data
+            this.phone = this.old.substr(0, 4) + event.data + this.old.substr(4)
             pos = 5
           }
           if (this.selection_length) {
