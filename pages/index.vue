@@ -57,10 +57,10 @@ svg {
 }
 h1 {
   color: #ffffff;
-  font-size: 4em;
+  font-size: calc(3vmin + 2vmax);
   font-weight: 500;
   display: block;
-  max-width: 12em;
+  max-width: calc(12 * 3vmin + 12 * 2vmax);
   line-height: 1.25;
   font-family: Rocketfont, Stolzl, Nexa, Montserrat, sans-serif;
 }
@@ -102,14 +102,14 @@ section.cover > .bg > .circle.second {
 section.cover > .try_it {
   position: absolute;
   bottom: 50vh;
-  right: 9vw;
+  right: calc(4vmin + 2vmax);
   font-size: 3em;
   font-weight: 700;
 }
 section.cover > .content > .description {
-  font-size: 1.25em;
+  font-size: calc(1vmin + .75vmax);
   margin-top: 1.5em;
-  max-width: 40em;
+  max-width: calc(30vmin + 40 * .75vmax);
 }
 section.cover > .content > .links {
   font-size: 1.35em;
@@ -141,7 +141,7 @@ footer {
   color: #696969;
   flex-wrap: wrap;
 }
-@media (max-width: 1024px) {
+@media (max-width: 1300px) {
   section.cover {
     display: flex;
     flex-direction: column;
@@ -156,7 +156,7 @@ footer {
     justify-content: center;
   }
   h1 {
-    font-size: 8vmin;
+    font-size: calc(4vmin + 2vmax);
   }
   section.cover > .content {
     position: relative;

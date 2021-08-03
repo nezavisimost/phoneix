@@ -75,7 +75,11 @@ export default {
       if(event.input_type === "insertText" || (["insertFromPaste"].includes(event.input_type)  && event.data.length === 1)) {
         // один адекватный символ
         if(!isNaN(event.data) && event.data !== " " && event.data.length === 1) {
-          if (this.$refs.phoneix_input.selectionStart < 5) {
+          if (this.phone === event.data) {
+            this.phone = '+7 (' + event.data
+            pos = 5
+          }
+          else if (this.$refs.phoneix_input.selectionStart < 5) {
             this.phone = this.old.substr(0, 4) + event.data + this.old.substr(4)
             pos = 5
           }
@@ -122,6 +126,14 @@ export default {
         else if (pos === 15) {
           // this.phone = this.formatted_phone({raw: this.raw.substr(0, 9) + this.raw.substr(9)})
           pos = 15
+        }
+        if (pos === 0 && this.raw.length <= 1) {
+          this.phone = "+7 ("
+          pos = 4
+        }
+        if (pos < 4) {
+          phone
+          pos = 4
         }
         adding = false
         pos = this.transform_position(pos, adding)
@@ -204,7 +216,7 @@ export default {
   text-align: left;
   border: none;
   outline: none;
-  width: 10em;
+  width: 9em;
   font-weight: inherit;
 }
 .phoneix_input.placeholder {
