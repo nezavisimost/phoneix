@@ -65,14 +65,14 @@ export default {
 
       // fix inputEvent.data (issue #2)
       let event = {data: e.data, input_type: e.inputType}
-      if(event.input_type === "insertFromPaste") {
+      if(["insertFromPaste"].includes(event.input_type)) {
         if (!event.data) {
           let paste_length = this.phone.length - this.old.length
           event.data = this.phone.substr(this.old_position, paste_length)
         }
       }
       // типа ввод одного символа
-      if(event.input_type === "insertText" || (["insertFromPaste", "insertFromDrop"].includes(event.input_type)  && event.data.length === 1)) {
+      if(event.input_type === "insertText" || (["insertFromPaste"].includes(event.input_type)  && event.data.length === 1)) {
         // один адекватный символ
         if(!isNaN(event.data) && event.data !== " " && event.data.length === 1) {
           if (this.$refs.phoneix_input.selectionStart < 5) {
@@ -90,22 +90,20 @@ export default {
             pos -= 1
             this.phone = this.old
           }
-          console.log(pos)
         }
       }
       // вставка из буфера обмена
-      else if(["insertFromPaste", "insertFromDrop"].includes(event.input_type)) {
+      else if(["insertFromPaste"].includes(event.input_type)) {
         // получаем только цифры из всей пасты
         let clear = event.data.replace( /\D+/g, '')
         // если все цифры образуют номер телфона
-        if(/[78]?9[0-9]{9}/gm.test(clear)){ // TODO: надо как-то научить вставлять в регулярку значение this.base
+        if(/[78]?[0-9]{10}/gm.test(clear)){ // TODO: надо как-то научить вставлять в регулярку значение this.base
           // убираем восьмёрку из начала
           this.phone = ["8"].includes(clear.substr(0, 1)) ? this.base + clear.substr(1) : clear
         }
         // иначе если паста соответствует хотя бы частично формату номера телефона
-        else if(/[0-9()\- ]{1,17}/gm.test(event.data)) {
+        else if(/[0-9()\- ]{1,10}/gm.test(clear)) {
           this.phone = this.old
-          let clear = event.data.replace( /\D+/g, '')
           // Пытаемся добавить номер телефона к имеющемуся
           this.phone = this.selectionReplace(this.phone, this.selection_start, this.selection_length, clear)
         }
@@ -114,19 +112,23 @@ export default {
       else if(event.input_type === "deleteContentBackward") {
         // let delta = this.old.length - this.phone.length
         if ([7, 8].includes(pos)) {
-          this.phone = this.formatted_phone({raw: this.raw.substr(0, 3) + this.raw.substr(4)})
-          pos = 6
+          // this.phone = this.formatted_phone({raw: this.raw.substr(0, 3) + this.raw.substr(4)})
+          pos = 7
         }
         else if (pos === 12) {
-          this.phone = this.formatted_phone({raw: this.raw.substr(0, 6) + this.raw.substr(7)})
-          pos = 11
+          // this.phone = this.formatted_phone({raw: this.raw.substr(0, 6) + this.raw.substr(7)})
+          pos = 12
         }
-        else if (pos === 16) {
-          this.phone = this.formatted_phone({raw: this.raw.substr(0, 9) + this.raw.substr(9)})
+        else if (pos === 15) {
+          // this.phone = this.formatted_phone({raw: this.raw.substr(0, 9) + this.raw.substr(9)})
           pos = 15
         }
         adding = false
         pos = this.transform_position(pos, adding)
+      }
+      else if (["deleteByDrag", "insertFromDrop"].includes(event.input_type)) {
+        this.phone = this.old
+        pos = this.phone.length
       }
 
       if(event.input_type === "historyUndo") {
@@ -165,8 +167,7 @@ export default {
       else {
         if(position === 8){return 7}
 
-        if(position === 12){return  11}
-        else if(position === 13 && this.phone.substr(-1) !== "-"){return  14}
+        else if(position === 13 && this.phone.substr(-1) !== "-"){return  12}
 
         return position
       }
