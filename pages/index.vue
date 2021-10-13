@@ -68,10 +68,12 @@ section.cover {
   min-height: 100vh;
   margin: 0;
   padding: 0;
+  font-size: calc(.75vmin + .5vmax);
+  display: flex;
+  justify-content: space-between;
 }
 section.cover > .content {
-  padding-top: 25vh;
-  padding-left: 5em;
+  margin: auto 0 auto 6em;
   position: relative;
 }
 section.cover > .bg {
@@ -100,9 +102,8 @@ section.cover > .bg > .circle.second {
   top: unset; bottom: 0; right: 0
 }
 section.cover > .try_it {
-  position: absolute;
-  bottom: 50vh;
-  right: calc(4vmin + 2vmax);
+  margin: auto 2em auto 0;
+  padding-bottom: 2em;
   font-size: 3em;
   font-weight: 700;
 }
@@ -123,7 +124,7 @@ section.cover > .content > .links a:first-of-type {
   background: #333333;
   border-radius: .35em;
   color: #ffffff;
-  font-weight: 500;
+  font-weight: 600;
 }
 section.cover > .content > .links a:last-of-type {
   margin-left: 2em;
@@ -143,7 +144,6 @@ footer {
 }
 @media (max-width: 1300px) {
   section.cover {
-    display: flex;
     flex-direction: column;
     justify-content: space-evenly;
   }
@@ -160,6 +160,7 @@ footer {
   }
   section.cover > .content {
     position: relative;
+    margin: auto;
     padding: 1em;
   }
   section.cover > .bg > .circle {
@@ -176,11 +177,40 @@ footer {
   }
 }
 @media (max-width: 500px) {
+  section.cover {
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  section.cover > .content {
+    margin: 1em auto;
+  }
+  section.cover > .try_it {
+    margin: 1em auto;
+  }
   section.cover > .content > .description {
-    font-size: 1em;
+    font-size: 2em;
   }
   section.cover > .content > .links {
     font-size: 4.5vmin;
+    flex-direction: column;
+  }
+  section.cover > .content > .links a:first-of-type {
+    padding: .75em 1.5em;
+    margin: 1em;
+    width: 80%;
+    display: block;
+    background: #333333;
+    border-radius: .35em;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: center;
+  }
+  section.cover > .content > .links a:last-of-type {
+    margin-left: 0;
+    width: 80%;
+    display: block;
+    transition: color .3s;
+    text-align: center;
   }
 }
 </style>
